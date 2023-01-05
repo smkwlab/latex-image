@@ -1,4 +1,4 @@
-FROM ghcr.io/smkwlab/textlint-docker:latest
+FROM ghcr.io/smkwlab/textlint-image:latest
 
 ARG TEXLIVE_VERSION=2022
 
