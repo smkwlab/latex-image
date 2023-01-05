@@ -21,7 +21,7 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v2
     - name: Get current date
       id: date
-      run: echo "::set-output name=today::$(date +'%Y%m%d%H%M')"
+      run: echo "::set-output name=today::$(date +'%Y%m%d')"
 
    # 3. Checkout code
     - name: Checkout
