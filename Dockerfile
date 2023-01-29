@@ -2,31 +2,26 @@ FROM ghcr.io/smkwlab/textlint-image:latest
 
 ARG TEXLIVE_VERSION=2022
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV DEBCONF_NOWARNINGS=yes
 ENV PATH="/usr/local/texlive/bin:$PATH"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apk --update-cache add \
         curl \
         make \
         wget \
         python3 \
-        libfontconfig1-dev \
-        libfreetype6-dev \
+        fontconfig-dev \
+        freetype-dev \
         ghostscript \
         perl \
         git \
         poppler-utils \
-        ttf-mscorefonts-installer && \
-    apt-get clean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+        msttcorefonts-installer
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        python3-pip \
+RUN apk --update-cache add \
+        alpine-sdk \
+        perl-dev \
+        perl-utils \
+        py3-pip \
         python3-dev && \
     echo 'y' | cpan YAML/Tiny.pm Log::Dispatch::File File::HomeDir Unicode::GCString && \
     pip3 install --no-cache-dir pygments && \
@@ -38,12 +33,13 @@ RUN apt-get update && \
     /tmp/install-tl-unx/install-tl \
         --profile /tmp/install-tl-unx/texlive.profile && \
     rm -r /tmp/install-tl-unx && \
-    ln -sf /usr/local/texlive/${TEXLIVE_VERSION}/bin/$(uname -m)-linux /usr/local/texlive/bin && \
-    apt-get remove -y --purge \
-        build-essential && \
-    apt-get clean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+    ln -sf /usr/local/texlive/${TEXLIVE_VERSION}/bin/$(uname -m)-linuxmusl /usr/local/texlive/bin && \
+    apk del --purge \
+        python3-dev \
+        py3-pip \
+        perl-utils \
+        perl-dev \
+        alpine-sdk
 
 RUN tlmgr option repository ctan && \
     tlmgr update --self && \
@@ -62,7 +58,7 @@ RUN tlmgr option repository ctan && \
         latexdiff \
         siunitx \
         latexindent && \
-    wget https://raw.githubusercontent.com/being24/plistings/master/plistings.sty && \
+    wget https://raw.githubusercontent.com/h-kitagawa/plistings/master/plistings.sty &&
     mv plistings.sty /usr/local/texlive/${TEXLIVE_VERSION}/texmf-dist/tex/latex/listing && \
     chmod +r /usr/local/texlive/${TEXLIVE_VERSION}/texmf-dist/tex/latex/listing/plistings.sty && \
     mktexlsr

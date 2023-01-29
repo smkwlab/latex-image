@@ -4,9 +4,10 @@ DOCKER=docker
 
 IMAGE=ghcr.io/smkwlab/$(notdir $(CURDIR))
 TAG1=$(IMAGE):latest
-TAG2=$(IMAGE):$(shell date +'%Y%m%d')
+TAG2=$(IMAGE):alpine
+TAG3=$(IMAGE):$(shell date +'%Y%m%d')
 
 all: build
 
 build:
-	$(DOCKER) image build -t $(TAG1) -t $(TAG2) .
+	$(DOCKER) image build -t $(TAG1) -t $(TAG2) -t $(TAG3) .
